@@ -118,7 +118,7 @@ document.getElementById('downloadButton').addEventListener('click', function() {
         textContent += item.textContent + '\n';
     });
 
-    const blob = new Blob([textContent], { type: 'text/plain' });
+    const blob = new Blob([textContent], { type: 'text/plain; charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
