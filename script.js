@@ -38,7 +38,18 @@ function generateEmailVariations(username) {
         addDots(username, 0); // Não remove pontos existentes
     }
 
-    return Array.from(variations).slice(0, maxItens);
+    // Função para embaralhar o array
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Embaralha as variações antes de retornar
+    const variationArray = Array.from(variations).slice(0, maxItens);
+    return shuffle(variationArray);
 }
 
 function copyToClipboard(text) {
