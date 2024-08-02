@@ -21,12 +21,37 @@
             overflow: hidden; /* Remove a barra de rolagem do body */
         }
         .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Preenche a altura total da tela */
-            padding: 20px;
+            width: 100%;
+            max-width: 600px; /* Defina a largura máxima conforme necessário */
+            margin: 0 auto;
+            padding: 10px;
         }
+
+        .results {
+            max-height: 400px; /* Defina a altura máxima para a área de resultados conforme necessário */
+            overflow-y: auto; /* Permite o scroll vertical */
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .email-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 6px;
+            margin-bottom: 5px; /* Espaçamento entre os itens */
+        }
+
+        .email-text {
+            cursor: pointer; /* Aponta que o texto é clicável */
+            color: #007bff; /* Cor para o texto */
+            text-decoration: underline; /* Sublinha o texto para parecer clicável */
+        }
+
+        .email-text:hover {
+            color: #0056b3; /* Cor ao passar o mouse sobre o texto */
+        }
+
         .box {
             width: 100%;
             max-width: 600px;
@@ -38,18 +63,7 @@
             gap: 10px;
             height: 100%; /* Ajusta para usar a altura total do container */
         }
-        .results {
-            overflow-y: auto;
-            flex: 1; /* Faz a div .results ocupar o espaço restante */
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .email-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+
         .alert {
             position: fixed;
             bottom: 20px;
@@ -58,20 +72,22 @@
             display: none;
             padding: 15px;
             color: #fff;
-            background-color: #31D643;
+            background-color: #11c95e;
             border-radius: 5px;
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             transition: opacity 0.5s ease;
-            width: 100%;
-            max-width: 600px;
+            width: 80%;
         }
+
         .btn-primary {
             height: 42px;
         }
+
         .itensLength {
-            margin-top: 12px;
+            font-size: 14px;
         }
+
     </style>
 </head>
 <body>
@@ -80,7 +96,7 @@
     <div class="box">
         
         <h4 class="text-left">Gerador de Gmail - <b>Método AliExpress</b></h4>
-        <h6 class="text-left">Telegram: <a href="https://t.me/+UxtEOGHmY1UzYTVh">Clique para entrar</a></h6>
+        <h6 class="text-left">Telegram: <a href="https://t.me/+UxtEOGHmY1UzYTVh" target="_blank">Clique para entrar</a></h6>
         <div class="form-group">
             <label for="usernameInput">Insira nome de usuário:</label>
             <div class="input-group">
@@ -91,7 +107,8 @@
             </div>
         </div>
         <button id="generateButton" class="btn btn-primary btn-block">Gerar</button>
-        <div class="itensLength text-center" id="itensLength"></div>
+        <div class="itensLength text-left" id="itensLength"></div>
+        <div class="itensLength text-left" id="itensLength"></div>
         <div class="results border rounded p-4 mt-3"></div>        
     </div>
 </div>

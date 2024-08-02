@@ -1,22 +1,44 @@
 function generateEmailVariations(username) {
     const domain = 'gmail.com';
     const variations = new Set();
-    
-    function addDots(usr, pos) {
-        if (variations.size >= 999) return;
-        
-        if (pos >= usr.length - 1) {
-            variations.add(usr + '@' + domain);
-            return;
-        }
+    const maxItens = 999;
 
-        addDots(usr.slice(0, pos + 1) + '.' + usr.slice(pos + 1), pos + 2);
-        addDots(usr, pos + 1);
+    // Remove qualquer coisa após o '@'
+    if (username.includes('@')) {
+        username = username.split('@')[0];
     }
 
-    addDots(username, 0);
-    
-    return Array.from(variations).slice(0, 500);
+    // Armazenar posições dos pontos existentes
+    const dotPositions = new Set();
+    for (let i = 0; i < username.length; i++) {
+        if (username[i] === '.') {
+            dotPositions.add(i);
+        }
+    }
+
+    // Função para gerar variações com pontos
+    function addDots(usr, index) {
+        if (variations.size >= maxItens) return;
+
+        // Adiciona a variação atual
+        variations.add(usr + '@' + domain);
+
+        // Adiciona pontos nas posições subsequentes, ignorando onde já há um ponto
+        for (let i = index; i < usr.length; i++) {
+            if (!dotPositions.has(i) && !dotPositions.has(i + 1) && usr[i] !== '.' && i !== usr.length-1) {
+                const newUsername = usr.slice(0, i + 1) + '.' + usr.slice(i + 1);
+                if (!newUsername.includes('..')) { // Verifica se não há dois pontos seguidos
+                    addDots(newUsername, i + 2);
+                }
+            }
+        }
+    }
+
+    if (username) {
+        addDots(username, 0); // Não remove pontos existentes
+    }
+
+    return Array.from(variations).slice(0, maxItens);
 }
 
 function copyToClipboard(text) {
@@ -27,7 +49,7 @@ function copyToClipboard(text) {
     document.execCommand('copy');
     document.body.removeChild(textarea);
     
-    // Show the alert
+    // Mostrar o alerta
     const alert = document.getElementById('copyAlert');
     alert.style.display = 'block';
     setTimeout(() => {
@@ -36,11 +58,11 @@ function copyToClipboard(text) {
             alert.style.display = 'none';
             alert.style.opacity = '1';
         }, 500);
-    }, 2000); // Alert duration
+    }, 2000); // Duração do alerta
 }
 
 document.getElementById('generateButton').addEventListener('click', function() {
-    const username = document.getElementById('usernameInput').value;
+    const username = document.getElementById('usernameInput').value.trim();
     const length = document.getElementById('itensLength');
     const resultsDiv = document.querySelector('.results');
     resultsDiv.innerHTML = '';
@@ -53,18 +75,13 @@ document.getElementById('generateButton').addEventListener('click', function() {
 
             const emailText = document.createElement('span');
             emailText.textContent = variation;
-
-            const copyButton = document.createElement('button');
-            copyButton.className = 'btn btn-sm btn-outline-secondary';
-            copyButton.textContent = 'Copiar';
-            copyButton.addEventListener('click', () => copyToClipboard(variation));
+            emailText.className = 'email-text'; // Adiciona uma classe para o texto do email
+            emailText.addEventListener('click', () => copyToClipboard(variation));
 
             emailItem.appendChild(emailText);
-            emailItem.appendChild(copyButton);
             resultsDiv.appendChild(emailItem);
 
-            length.innerHTML = `Itens gerados: <b>${emailVariations.length}</b>`;
-
+            length.innerHTML = `Clique nos itens para copiar. Foram geradas: <b>${emailVariations.length}</b> variações.`;
         });
     } else {
         length.innerHTML = `Itens gerados: 0`;
