@@ -107,7 +107,7 @@ document.getElementById('downloadButton').addEventListener('click', function() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'emails.txt';
+    a.download = 'emails_metodo_aliexpress.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
