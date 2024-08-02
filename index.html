@@ -33,23 +33,33 @@
 
         .box {
             width: 100%;
-            border: 1px solid #d0d0d0 !important;
+            border: 1px solid #d0d0d0;
             border-radius: 24px;
             padding: 26px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             height: 100%; /* Ajusta para usar a altura total do container */
+            box-sizing: border-box; /* Inclui padding e border na largura e altura total */
         }
 
         .results {
-            max-height: 400px; /* Defina a altura máxima para a área de resultados conforme necessário */
-            overflow-y: visible; /* Permite o scroll vertical */
-            overflow-x: hidden;
             display: none;
+            max-height: 400px; 
+            overflow: hidden;
             width: 100%;
+            border: 1px solid #d0d0d0;
+            border-radius: 12px;
+            box-sizing: border-box;
+            flex-direction: column;  
+        }
+
+        .results-inner {
+            height: 100%;
+            overflow-y: scroll;
+            box-sizing: border-box; 
             flex-direction: column;
-            gap: 8px;
+            padding: 10px; 
         }
 
         .email-item {
@@ -131,6 +141,16 @@
             font-size: 1rem;
         }
 
+        @media screen and (max-width: 768px) {
+            .alert {
+                left: 50%; 
+                bottom: 25px; 
+                transform: translateX(-50%); 
+                color: #fff;
+                width: max-content;
+            }
+        }
+
         
     </style>
 </head>
@@ -144,21 +164,25 @@
         <!-- <label for="input-group" class="form-label">Seu nome de usuário</label> -->
         <label for="form-control" class="fs-6">Seu nome de usuário:</label>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Nome de usuário" aria-label="Nome de usuário" aria-describedby="basic-addon2"id="usernameInput">
+            <input type="text" class="form-control" placeholder="Nome de usuário" aria-label="Nome de usuário" aria-describedby="basic-addon2"id="usernameInput" autofocus>
             <span class="input-group-text" id="basic-addon2">@gmail.com</span>
           </div>
             
         <div class="d-grid gap-2">
             <button class="btn btn-primary" type="button" id="generateButton"><span class="material-symbols-outlined">autorenew</span><span class="value">Gerar</span></button>
-            <button class="btn btn-outline-secondary" type="button" id="downloadButton"><span class="material-symbols-outlined">download</span><span class="value">Baixar (0)</span></button>
+            <button class="btn btn-outline-secondary" type="button" id="downloadButton" disabled><span class="material-symbols-outlined">download</span><span class="value">Baixar (0)</span></button>
         </div>
         
         <div class="itemText text-center" id="itemText">Pressione nos itens para copiar.</div>
-        <div class="results"></div>        
+        <div class="results">
+            <div class="results-inner">
+            <!-- Conteúdo que pode rolar -->
+            </div>
+        </div>        
     </div>
 </div>
 
-<div class="alert alert-success" role="alert" id="copyAlert">
+<div class="alert alert-success fs-6" role="alert" id="copyAlert">
     Copiado para a área de transferência!
 </div>
 

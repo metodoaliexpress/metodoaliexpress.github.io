@@ -73,6 +73,7 @@ function copyToClipboard(text) {
 }
 
 document.getElementById('generateButton').addEventListener('click', function() {
+    const downloadButton = document.getElementById('downloadButton');
     const downloadButtonSpan = document.querySelector('#downloadButton .value');
     const itemText = document.querySelector('.itemText');
     const usernameText = document.getElementById('usernameInput').value.replace(/\s+/g, '');
@@ -80,7 +81,8 @@ document.getElementById('generateButton').addEventListener('click', function() {
     const emailVariations = generateEmailVariations(username);
     document.getElementById('usernameInput').value = username;
     downloadButtonSpan.textContent = `Baixar (${emailVariations.length})`;
-    const resultsDiv = document.querySelector('.results');
+    const results = document.querySelector('.results');
+    const resultsDiv = document.querySelector('.results-inner');
     resultsDiv.innerHTML = '';
 
     if (username) {
@@ -96,18 +98,19 @@ document.getElementById('generateButton').addEventListener('click', function() {
             emailItem.appendChild(emailText);
             resultsDiv.appendChild(emailItem);
 
-            resultsDiv.style.display = 'flex';
+            results.style.display = 'flex';
             itemText.style.display = 'block';
         });
+        downloadButton.disabled = false;
     } else {
-            resultsDiv.style.display = 'none';
-            itemText.style.display = 'none';
-
+        results.style.display = 'none';
+        itemText.style.display = 'none';
+        downloadButton.disabled = true; 
     }
 });
 
 document.getElementById('downloadButton').addEventListener('click', function() {
-    const resultsDiv = document.querySelector('.results');
+    const resultsDiv = document.querySelector('.results-inner');
     const emailItems = resultsDiv.querySelectorAll('.email-item .email-text');
     let textContent = 'Gerador de Gmail - Método AliExpress' + '\n' + 'Telegram: https://t.me/+UxtEOGHmY1UzYTVh' + '\n\n';
 
@@ -125,3 +128,4 @@ document.getElementById('downloadButton').addEventListener('click', function() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 });
+
