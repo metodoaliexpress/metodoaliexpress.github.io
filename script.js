@@ -62,13 +62,16 @@ function copyToClipboard(text) {
 }
 
 document.getElementById('generateButton').addEventListener('click', function() {
-    const username = document.getElementById('usernameInput').value.trim();
-    const length = document.getElementById('itensLength');
+    const downloadButtonSpan = document.querySelector('#downloadButton .value');
+    const itemText = document.querySelector('.itemText');
+    const username = document.getElementById('usernameInput').value.toLowerCase();
+    const emailVariations = generateEmailVariations(username);
+    document.getElementById('usernameInput').value = username;
+    downloadButtonSpan.textContent = `Baixar (${emailVariations.length})`;
     const resultsDiv = document.querySelector('.results');
     resultsDiv.innerHTML = '';
 
     if (username) {
-        const emailVariations = generateEmailVariations(username);
         emailVariations.forEach(variation => {
             const emailItem = document.createElement('div');
             emailItem.className = 'email-item';
@@ -81,9 +84,32 @@ document.getElementById('generateButton').addEventListener('click', function() {
             emailItem.appendChild(emailText);
             resultsDiv.appendChild(emailItem);
 
-            length.innerHTML = `Clique nos itens para copiar. Foram geradas: <b>${emailVariations.length}</b> variações.`;
+            resultsDiv.style.display = 'flex';
+            itemText.style.display = 'block';
         });
     } else {
-        length.innerHTML = `Itens gerados: 0`;
+            resultsDiv.style.display = 'none';
+            itemText.style.display = 'none';
+
     }
+});
+
+document.getElementById('downloadButton').addEventListener('click', function() {
+    const resultsDiv = document.querySelector('.results');
+    const emailItems = resultsDiv.querySelectorAll('.email-item .email-text');
+    let textContent = 'Gerador de Gmail - Método AliExpress' + '\n' + 'Telegram: https://t.me/+UxtEOGHmY1UzYTVh' + '\n\n';
+
+    emailItems.forEach(item => {
+        textContent += item.textContent + '\n';
+    });
+
+    const blob = new Blob([textContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'emails.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 });

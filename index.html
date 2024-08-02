@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         * {
             font-family: "Inter", sans-serif;
@@ -22,23 +23,24 @@
         }
         .container {
             width: 100%;
-            max-width: 600px; /* Defina a largura máxima conforme necessário */
+            max-width: 500px; /* Defina a largura máxima conforme necessário */
             margin: 0 auto;
             padding: 10px;
         }
 
         .results {
             max-height: 400px; /* Defina a altura máxima para a área de resultados conforme necessário */
-            overflow-y: auto; /* Permite o scroll vertical */
-            border: 1px solid #ddd;
-            padding: 10px;
+            overflow-y: scroll; /* Permite o scroll vertical */
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            border: 1px solid #d0d0d0 !important;
         }
 
         .email-item {
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding: 6px;
+            padding: 4px 0;
             margin-bottom: 5px; /* Espaçamento entre os itens */
         }
 
@@ -55,12 +57,12 @@
         .box {
             width: 100%;
             max-width: 600px;
-            border: 1px solid #ccc;
+            border: 1px solid #d0d0d0 !important;
             border-radius: 24px;
             padding: 32px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             height: 100%; /* Ajusta para usar a altura total do container */
         }
 
@@ -70,24 +72,45 @@
             left: 50%;
             transform: translateX(-50%);
             display: none;
-            padding: 15px;
+            padding: 18px;
             color: #fff;
             background-color: #11c95e;
             border-radius: 5px;
             z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: opacity 0.5s ease;
-            width: 80%;
+            transition: opacity 0.5s ease-in-out;
+            width: max-content;
         }
 
-        .btn-primary {
+        .btn {
             height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
-        .itensLength {
+        .itemText {
             font-size: 14px;
+            margin-top: 10px;
+            display: none;
         }
 
+        .controlBox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        @media screen and (min-width: 600px) {
+            .alert {
+                width: max-content;
+                left: 25px;
+                bottom: 25px;
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -106,9 +129,11 @@
                 </div>
             </div>
         </div>
-        <button id="generateButton" class="btn btn-primary btn-block">Gerar</button>
-        <div class="itensLength text-left" id="itensLength"></div>
-        <div class="itensLength text-left" id="itensLength"></div>
+        <div class="controlBox">
+        <button id="generateButton" class="btn btn-primary btn-block"><span class="material-symbols-outlined">autorenew</span><span class="value">Gerar</span></button>
+        <button id="downloadButton" class="btn btn-secondary btn-block"><span class="material-symbols-outlined">download</span><span class="value">Baixar (0)</span></button>
+        </div>
+        <div class="itemText text-center" id="itemText">Clique nos itens para copiar.</div>
         <div class="results border rounded p-4 mt-3"></div>        
     </div>
 </div>
