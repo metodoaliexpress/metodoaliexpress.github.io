@@ -64,7 +64,8 @@ function copyToClipboard(text) {
 document.getElementById('generateButton').addEventListener('click', function() {
     const downloadButtonSpan = document.querySelector('#downloadButton .value');
     const itemText = document.querySelector('.itemText');
-    const username = document.getElementById('usernameInput').value.toLowerCase();
+    const usernameText = document.getElementById('usernameInput').value.replace(/\s+/g, '');
+    const username = usernameText.toLowerCase();
     const emailVariations = generateEmailVariations(username);
     document.getElementById('usernameInput').value = username;
     downloadButtonSpan.textContent = `Baixar (${emailVariations.length})`;
@@ -76,7 +77,7 @@ document.getElementById('generateButton').addEventListener('click', function() {
             const emailItem = document.createElement('div');
             emailItem.className = 'email-item';
 
-            const emailText = document.createElement('span');
+            const emailText = document.createElement('code');
             emailText.textContent = variation;
             emailText.className = 'email-text'; // Adiciona uma classe para o texto do email
             emailText.addEventListener('click', () => copyToClipboard(variation));
