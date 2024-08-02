@@ -14,31 +14,36 @@
             padding: 0;
             margin: 0;
             box-sizing: border-box;
-            
         }
         body {
-            padding: 20px;
-            overflow-y: none;
+            padding: 0;
+            margin: 0;
+            overflow: hidden; /* Remove a barra de rolagem do body */
         }
         .container {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            max-height: 100vh;
+            align-items: center;
+            height: 100vh; /* Preenche a altura total da tela */
+            padding: 42px;
         }
         .box {
             width: 100%;
+            max-width: 600px;
             border: 1px solid #ccc;
             border-radius: 24px;
             padding: 32px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 100vh;
+            gap: 10px;
+            height: 100%; /* Ajusta para usar a altura total do container */
         }
         .results {
-            overflow-y: scroll;
-            max-height: 200px;
+            overflow-y: auto;
+            flex: 1; /* Faz a div .results ocupar o espaço restante */
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         .email-item {
             display: flex;
@@ -53,12 +58,19 @@
             display: none;
             padding: 15px;
             color: #fff;
-            background-color: #28a745;
+            background-color: #31D643;
             border-radius: 5px;
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             transition: opacity 0.5s ease;
             width: 100%;
+            max-width: 600px;
+        }
+        .btn-primary {
+            height: 42px;
+        }
+        .itensLength {
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -66,8 +78,9 @@
 
 <div class="container">
     <div class="box">
-        <h6 class="text-left">Telegram: <a href="https://t.me/+UxtEOGHmY1UzYTVh">Clique para entrar</a></h6>
+        
         <h4 class="text-left">Gerador de Gmail - <b>Método AliExpress</b></h4>
+        <h6 class="text-left">Telegram: <a href="https://t.me/+UxtEOGHmY1UzYTVh">Clique para entrar</a></h6>
         <div class="form-group">
             <label for="usernameInput">Insira nome de usuário:</label>
             <div class="input-group">
@@ -78,7 +91,7 @@
             </div>
         </div>
         <button id="generateButton" class="btn btn-primary btn-block">Gerar</button>
-        <div class="text-center" id="itensLength"></div>
+        <div class="itensLength text-center" id="itensLength"></div>
         <div class="results border rounded p-4 mt-3"></div>        
     </div>
 </div>
