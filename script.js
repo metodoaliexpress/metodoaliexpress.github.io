@@ -1,14 +1,25 @@
+function setLocalStorage(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getLocalStorage(key) {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+}
+
+function deleteLocalStorage(key) {
+    localStorage.removeItem(key);
+}
+
 function generateEmailVariations(username) {
     const domain = 'gmail.com';
     const variations = new Set();
-    const maxItens = 999;
+    const maxItens = 512;
 
-    // Remove qualquer coisa após o '@'
     if (username.includes('@')) {
         username = username.split('@')[0];
     }
 
-    // Armazenar posições dos pontos existentes
     const dotPositions = new Set();
     for (let i = 0; i < username.length; i++) {
         if (username[i] === '.') {
@@ -16,18 +27,14 @@ function generateEmailVariations(username) {
         }
     }
 
-    // Função para gerar variações com pontos
     function addDots(usr, index) {
         if (variations.size >= maxItens) return;
-
-        // Adiciona a variação atual
         variations.add(usr + '@' + domain);
 
-        // Adiciona pontos nas posições subsequentes, ignorando onde já há um ponto
         for (let i = index; i < usr.length; i++) {
-            if (!dotPositions.has(i) && !dotPositions.has(i + 1) && usr[i] !== '.' && i !== usr.length-1) {
+            if (!dotPositions.has(i) && !dotPositions.has(i + 1) && usr[i] !== '.' && i !== usr.length - 1) {
                 const newUsername = usr.slice(0, i + 1) + '.' + usr.slice(i + 1);
-                if (!newUsername.includes('..')) { // Verifica se não há dois pontos seguidos
+                if (!newUsername.includes('..')) {
                     addDots(newUsername, i + 2);
                 }
             }
@@ -35,10 +42,9 @@ function generateEmailVariations(username) {
     }
 
     if (username) {
-        addDots(username, 0); // Não remove pontos existentes
+        addDots(username, 0);
     }
 
-    // Função para embaralhar o array
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -47,7 +53,6 @@ function generateEmailVariations(username) {
         return array;
     }
 
-    // Embaralha as variações antes de retornar
     const variationArray = Array.from(variations).slice(0, maxItens);
     return shuffle(variationArray);
 }
@@ -59,8 +64,7 @@ function copyToClipboard(text) {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    
-    // Mostrar o alerta
+
     const alert = document.getElementById('copyAlert');
     alert.style.display = 'block';
     setTimeout(() => {
@@ -69,50 +73,81 @@ function copyToClipboard(text) {
             alert.style.display = 'none';
             alert.style.opacity = '1';
         }, 500);
-    }, 2000); // Duração do alerta
+    }, 2000);
 }
 
-document.getElementById('generateButton').addEventListener('click', function() {
+function loadResultsFromLocalStorage() {
+    const savedResults = getLocalStorage('emailVariations');
+    const savedUsername = getLocalStorage('username');
+    if (savedResults && savedUsername) {
+        const emailVariations = savedResults;
+        document.getElementById('usernameInput').value = savedUsername;
+        displayResults(emailVariations, savedUsername);
+        document.getElementById('downloadButton').disabled = false;
+        document.getElementById('deleteButton').disabled = false;
+        document.getElementById('downloadButton').innerHTML = `<span class="material-symbols-outlined">download</span><span class="value">Baixar (${emailVariations.length})</span>`;
+    }
+}
+
+function displayResults(emailVariations, username) {
+    const results = document.querySelector('.results');
+    const resultsDiv = document.querySelector('.results-inner');
+    const itemText = document.querySelector('.itemText');
+    resultsDiv.innerHTML = '';
+
+    const originalEmail = username + '@gmail.com';
+    const orderedVariations = [originalEmail, ...emailVariations.filter(email => email !== originalEmail)];
+
+    orderedVariations.forEach(variation => {
+        const emailItem = document.createElement('div');
+        emailItem.className = 'email-item';
+
+        const emailText = document.createElement('code');
+        emailText.textContent = variation;
+        emailText.className = 'email-text';
+        emailText.addEventListener('click', () => copyToClipboard(variation));
+
+        emailItem.appendChild(emailText);
+        resultsDiv.appendChild(emailItem);
+
+        results.style.display = 'flex';
+        itemText.style.display = 'block';
+    });
+}
+
+document.getElementById('generateButton').addEventListener('click', async function () {
     const downloadButton = document.getElementById('downloadButton');
     const downloadButtonSpan = document.querySelector('#downloadButton .value');
+    const deleteButton = document.getElementById('deleteButton');
     const itemText = document.querySelector('.itemText');
     const usernameText = document.getElementById('usernameInput').value.replace(/\s+/g, '');
     const username = usernameText.toLowerCase();
-    const emailVariations = generateEmailVariations(username);
+    const emailVariations = await generateEmailVariations(username);
     document.getElementById('usernameInput').value = username;
     downloadButtonSpan.textContent = `Baixar (${emailVariations.length})`;
-    const results = document.querySelector('.results');
     const resultsDiv = document.querySelector('.results-inner');
-    resultsDiv.innerHTML = '';
 
     if (username) {
-        emailVariations.forEach(variation => {
-            const emailItem = document.createElement('div');
-            emailItem.className = 'email-item';
-
-            const emailText = document.createElement('code');
-            emailText.textContent = variation;
-            emailText.className = 'email-text'; // Adiciona uma classe para o texto do email
-            emailText.addEventListener('click', () => copyToClipboard(variation));
-
-            emailItem.appendChild(emailText);
-            resultsDiv.appendChild(emailItem);
-
-            results.style.display = 'flex';
-            itemText.style.display = 'block';
-        });
+        if (document.getElementById('flexSwitchCheckChecked').checked) {
+            setLocalStorage('emailVariations', emailVariations);
+            setLocalStorage('username', username);
+        }
+        displayResults(emailVariations, username);
         downloadButton.disabled = false;
+        deleteButton.disabled = false;
     } else {
-        results.style.display = 'none';
+        resultsDiv.innerHTML = '';
+        document.querySelector('.results').style.display = 'none';
         itemText.style.display = 'none';
-        downloadButton.disabled = true; 
+        downloadButton.disabled = true;
+        deleteButton.disabled = true;
     }
 });
 
-document.getElementById('downloadButton').addEventListener('click', function() {
+document.getElementById('downloadButton').addEventListener('click', function () {
     const resultsDiv = document.querySelector('.results-inner');
     const emailItems = resultsDiv.querySelectorAll('.email-item .email-text');
-    let textContent = 'Gerador de Gmail - Método AliExpress' + '\n' + 'Telegram: https://t.me/+UxtEOGHmY1UzYTVh' + '\n\n';
+    let textContent = 'Método AliExpress – Gerador de Variações do Gmail' + '\n' + 'Grupo no Telegram: https://t.me/+UxtEOGHmY1UzYTVh' + '\n\n';
 
     emailItems.forEach(item => {
         textContent += item.textContent + '\n';
@@ -129,3 +164,16 @@ document.getElementById('downloadButton').addEventListener('click', function() {
     URL.revokeObjectURL(url);
 });
 
+document.getElementById('deleteButton').addEventListener('click', function () {
+    document.getElementById('usernameInput').value = '';
+    document.querySelector('.results-inner').innerHTML = '';
+    document.querySelector('.results').style.display = 'none';
+    document.getElementById('itemText').style.display = 'none';
+    document.getElementById('downloadButton').disabled = true;
+    document.getElementById('deleteButton').disabled = true;
+    document.getElementById('downloadButton').innerHTML = `<span class="material-symbols-outlined">download</span><span class="value">Baixar (0)</span>`;
+    deleteLocalStorage('emailVariations');
+    deleteLocalStorage('username');
+});
+
+window.onload = loadResultsFromLocalStorage;
